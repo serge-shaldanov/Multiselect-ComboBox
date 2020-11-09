@@ -171,8 +171,6 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
 
                     CurrentFilterService = FilterService ?? new DefaultFilterService();
                     CurrentFilterService.SetFilter(EnableFiltering ? SelectedItemsFilterTextBox?.Text : string.Empty);
-
-                    CurrentItemFactoryService = ItemFactoryService;
                 }
             }
         }
@@ -254,8 +252,6 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
             get => _currentFilterService ?? (_currentFilterService = new DefaultFilterService());
             set => _currentFilterService = value;
         }
-
-        private IItemFactoryService CurrentItemFactoryService { get; set; }
 
         private ObservableCollection<object> _selectedItemsInternal;
         private ObservableCollection<object> SelectedItemsInternal
@@ -1555,13 +1551,13 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
 
         private void CreateNewSelectedItem()
         {
-            if (CurrentItemFactoryService == null)
+            if (ItemFactoryService == null)
             {
                 return;
             }
 
-            object newItem = CurrentItemFactoryService.CreateNewItem(SelectedItemsFilterTextBox.Text);
-            object[] newItems = new[] {newItem};
+            object newItem = ItemFactoryService.CreateNewItem(SelectedItemsFilterTextBox.Text);
+            object[] newItems = {newItem};
 
             Collection<object> itemsAdded = new Collection<object>(new List<object>(1));
 
