@@ -171,6 +171,8 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
 
                     CurrentFilterService = FilterService ?? new DefaultFilterService();
                     CurrentFilterService.SetFilter(EnableFiltering ? SelectedItemsFilterTextBox?.Text : string.Empty);
+
+                    CurrentItemFactoryService = ItemFactoryService;
                 }
             }
         }
@@ -246,14 +248,14 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
             }
         }
 
-        private IComparer _groupComparerService;
-
         private IFilterService _currentFilterService;
         private IFilterService CurrentFilterService
         {
             get => _currentFilterService ?? (_currentFilterService = new DefaultFilterService());
             set => _currentFilterService = value;
         }
+
+        private IItemFactoryService CurrentItemFactoryService { get; set; }
 
         private ObservableCollection<object> _selectedItemsInternal;
         private ObservableCollection<object> SelectedItemsInternal
@@ -427,11 +429,21 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
         public static readonly DependencyProperty EnableFilteringProperty =
             DependencyProperty.Register("EnableFiltering", typeof(bool), typeof(MultiSelectComboBox),
                 new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.None, EnableFilteringPropertyChangedCallback));
+        
+        public static readonly DependencyProperty EnableNewItemsCreationProperty =
+            DependencyProperty.Register("EnableNewItemsCreation", typeof(bool), typeof(MultiSelectComboBox),
+                new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.None));
 
         public bool EnableFiltering
         {
             get => (bool)GetValue(EnableFilteringProperty);
             set => SetValue(EnableFilteringProperty, value);
+        }
+
+        public bool EnableNewItemsCreation
+        {
+            get => (bool)GetValue(EnableNewItemsCreationProperty);
+            set => SetValue(EnableNewItemsCreationProperty, value);
         }
 
         private static void EnableFilteringPropertyChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
@@ -448,10 +460,20 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
             DependencyProperty.Register("FilterService", typeof(IFilterService), typeof(MultiSelectComboBox),
                 new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.None, FilterServicePropertyChangedCallback));
 
+        public static readonly DependencyProperty ItemFactoryServiceProperty =
+            DependencyProperty.Register("ItemFactoryService", typeof(IItemFactoryService), typeof(MultiSelectComboBox),
+                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.None));
+
         public IFilterService FilterService
         {
             get => (IFilterService)GetValue(FilterServiceProperty);
             set => SetValue(FilterServiceProperty, value);
+        }
+
+        public IItemFactoryService ItemFactoryService
+        {
+            get => (IItemFactoryService)GetValue(ItemFactoryServiceProperty);
+            set => SetValue(ItemFactoryServiceProperty, value);
         }
 
         private static void FilterServicePropertyChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
@@ -1222,7 +1244,6 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
                         listBoxItem.IsChecked = !listBoxItem.IsChecked;
 
                         UpdateSelectedItemsContainer(ItemsSource);
-
                     }
                 }
             }
@@ -1525,6 +1546,31 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
                 listBoxItem.IsChecked = true;
 
                 UpdateSelectedItemsContainer(ItemsSource);
+            }
+            else if (EnableNewItemsCreation)
+            {
+                CreateNewSelectedItem();
+            }
+        }
+
+        private void CreateNewSelectedItem()
+        {
+            if (CurrentItemFactoryService == null)
+            {
+                return;
+            }
+
+            object newItem = CurrentItemFactoryService.CreateNewItem(SelectedItemsFilterTextBox.Text);
+            object[] newItems = new[] {newItem};
+
+            Collection<object> itemsAdded = new Collection<object>(new List<object>(1));
+
+            AddSelectedItems(SelectedItemsInternal, newItems, ref itemsAdded, this);
+
+            if (itemsAdded.Count > 0)
+            {
+                RaiseSelectedItemsChangedEvent(itemsAdded, new Collection<object>(),
+                    SelectedItemsInternal.Where(a => a != null).ToList());
             }
         }
 

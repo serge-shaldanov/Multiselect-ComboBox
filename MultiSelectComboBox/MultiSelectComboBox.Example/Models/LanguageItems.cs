@@ -77,7 +77,9 @@ namespace Sdl.MultiSelectComboBox.Example.Models
 
 		public IFilterService FilterService { get; set; }
 
-		public RecentlyUsedService RecentlyUsedFilterService { get; }
+        public IItemFactoryService ItemFactoryService { get; } = new CustomItemFactoryService();
+
+        public RecentlyUsedService RecentlyUsedFilterService { get; }
 
         public ObservableCollection<LanguageItem> Items
         {
@@ -409,7 +411,7 @@ namespace Sdl.MultiSelectComboBox.Example.Models
 			}
 		}
 
-		public bool UseCustomFilterService
+        public bool UseCustomFilterService
 		{
 			get => _useCustomFilterService;
 			set

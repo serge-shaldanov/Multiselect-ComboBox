@@ -56,6 +56,7 @@
   <ItemGroup>
     <Compile Include="API\IFilterService.cs" />
     <Compile Include="API\IItemEnabledAware.cs" />
+    <Compile Include="API\IItemFactoryService.cs" />
     <Compile Include="API\IItemGroup.cs" />
     <Compile Include="API\IItemGroupAware.cs" />
     <Compile Include="API\ISuggestionProvider.cs" />
