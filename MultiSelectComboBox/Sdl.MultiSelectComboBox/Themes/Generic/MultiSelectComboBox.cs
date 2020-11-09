@@ -167,26 +167,7 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
 
                 if (ItemsCollectionViewSource != null && ItemsSource != null)
                 {
-                    if (EnableGrouping)
-                    {
-                        // check that the items are groupable before adding a default group definition
-                        if (ItemsCollectionViewSource.GroupDescriptions.Count == 0)
-                        {
-                            var isGenericTypeGroupable = ItemsSource.GetType().IsGenericType
-                                && typeof(IItemGroupAware).IsAssignableFrom(ItemsSource.GetType().GetGenericArguments()[0]);
-                            if(isGenericTypeGroupable || ItemsSource.Count > 0 && ItemsSource[0] is IItemGroupAware)
-                                ItemsCollectionViewSource.GroupDescriptions.Add(new PropertyGroupDescription("Group"));
-                        }
-
-                        foreach (var groupDescription in ItemsCollectionViewSource.GroupDescriptions)
-                        {
-                            groupDescription.CustomSort = GroupComparerService;
-                        }
-                    }
-                    else
-                    {
-                        ItemsCollectionViewSource?.GroupDescriptions.Clear();
-                    }
+                    ItemsCollectionViewSource?.GroupDescriptions.Clear();
 
                     CurrentFilterService = FilterService ?? new DefaultFilterService();
                     CurrentFilterService.SetFilter(EnableFiltering ? SelectedItemsFilterTextBox?.Text : string.Empty);
@@ -266,7 +247,6 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
         }
 
         private IComparer _groupComparerService;
-        private IComparer GroupComparerService => _groupComparerService ?? (_groupComparerService = new GroupComparerService());
 
         private IFilterService _currentFilterService;
         private IFilterService CurrentFilterService
@@ -433,12 +413,6 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
         public static readonly DependencyProperty EnableGroupingProperty =
             DependencyProperty.Register("EnableGrouping", typeof(bool), typeof(MultiSelectComboBox),
                 new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.None, EnableGroupingPropertyChangedCallback));
-
-        public bool EnableGrouping
-        {
-            get => (bool)GetValue(EnableGroupingProperty);
-            set => SetValue(EnableGroupingProperty, value);
-        }
 
         private static void EnableGroupingPropertyChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
         {

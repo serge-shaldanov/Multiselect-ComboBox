@@ -23,7 +23,6 @@ namespace Sdl.MultiSelectComboBox.Example.Models
 		private bool _listenToFilterTextChanged;
 		private bool _listenToSelectedItemsChanged;
 		private bool _enableAutoComplete;
-		private bool _enableGrouping;
 		private bool _useRecentlyUsedGroupingService;
 		private bool _enableFiltering;
 		private bool _useCustomFilterService;
@@ -47,7 +46,6 @@ namespace Sdl.MultiSelectComboBox.Example.Models
 			EnableFiltering = true;
 			UseCustomFilterService = true;
 
-			EnableGrouping = true;
 			UseRecentlyUsedGroupingService = true;
 
 			EnableAutoComplete = true;
@@ -255,25 +253,6 @@ namespace Sdl.MultiSelectComboBox.Example.Models
 				UpdateEventLog(nameof(ListenToSelectedItemsChanged), _listenToSelectedItemsChanged.ToString());
 
 				OnPropertyChanged(nameof(ListenToSelectedItemsChanged));
-			}
-		}
-
-		public bool EnableGrouping
-		{
-			get => _enableGrouping;
-			set
-			{
-				if (_enableGrouping.Equals(value))
-				{
-					return;
-				}
-
-				_enableGrouping = value;
-
-				UpdateEventLog(nameof(EnableGrouping), _enableGrouping.ToString());
-
-				OnPropertyChanged(nameof(EnableGrouping));
-				OnPropertyChanged(nameof(UseRecentlyUsedGroupingService));
 			}
 		}
 
