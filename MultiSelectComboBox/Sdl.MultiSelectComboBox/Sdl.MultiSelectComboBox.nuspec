@@ -13,5 +13,11 @@
     <copyright>Copyright © Sdl Community 2019</copyright>
     <tags>WPF MultiSelectCombo</tags>
 	<repository type="git" url="https://github.com/serge-shaldanov/Multiselect-ComboBox" />
+	<dependencies>
+      <group targetFramework=".NETFramework4.6" />
+    </dependencies>   
   </metadata>
+  <files>
+    <file src="bin/Release/Sdl.MultiSelectComboBox.dll" target="lib/net46/" />
+  </files>
 </package>
