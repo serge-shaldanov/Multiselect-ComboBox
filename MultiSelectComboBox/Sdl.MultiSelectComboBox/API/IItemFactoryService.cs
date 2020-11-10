@@ -2,6 +2,8 @@
 {
     public interface IItemFactoryService
     {
+        bool CanCreate(string text);
+
         object CreateNewItem(string text);
     }
 }

@@ -1551,13 +1551,17 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
 
         private void CreateNewSelectedItem()
         {
-            if (ItemFactoryService == null)
+            string selectedText = SelectedItemsFilterTextBox.Text;
+
+            if (ItemFactoryService == null || !ItemFactoryService.CanCreate(selectedText))
             {
                 return;
             }
 
-            object newItem = ItemFactoryService.CreateNewItem(SelectedItemsFilterTextBox.Text);
-            object[] newItems = {newItem};
+            object[] newItems =
+            {
+                ItemFactoryService.CreateNewItem(selectedText)
+            };
 
             Collection<object> itemsAdded = new Collection<object>(new List<object>(1));
 
