@@ -786,8 +786,6 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
 
         private bool MultiSelectComboBoxHasFocus { get; set; }
 
-        private static List<DeferredAction> _deferredActions = new List<DeferredAction>();
-
         private bool IsSelectedItem(object item)
         {
             return SelectedItemsInternal.Contains(item);
