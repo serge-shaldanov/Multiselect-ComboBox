@@ -991,8 +991,7 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
 
         private void MultiSelectComboBox_PreviewKeyUp(object sender, KeyEventArgs e)
         {
-            // allows the user to switch to edit mode when control as focus and typing F2 (similar to excel cell behaviour)
-            if (e.Key == Key.F2 && !IsEditMode)
+            if (!IsEditMode)
             {
                 AssignIsEditMode();
             }
