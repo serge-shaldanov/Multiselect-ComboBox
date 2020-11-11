@@ -349,7 +349,7 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
                 deferredAction();
             }
 
-            this._deferredActions.Clear();
+            _deferredActions.Clear();
         }
         public enum SelectionModes
         {
@@ -599,19 +599,49 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
 
             if (control.SelectedItemsControl == null)
             {
-                control.SelectedItemsControl = VisualTreeService.FindVisualChild<ItemsControl>(control.MultiSelectComboBoxGrid, PART_MultiSelectComboBox_SelectedItemsPanel_ItemsControl);
+                var el = VisualTreeService.FindVisualChild<ItemsControl>(control.MultiSelectComboBoxGrid, PART_MultiSelectComboBox_SelectedItemsPanel_ItemsControl);
+
+                if (el is null)
+                {
+                    control.Dispatcher.BeginInvoke(DispatcherPriority.Loaded,
+                        (Action) (() =>
+                            ItemsPropertyChangedCallback(dependencyObject, dependencyPropertyChangedEventArgs)));
+                    return;
+                }
+
+                control.SelectedItemsControl = el;
             }
 
             if (control.DropdownListBox == null)
             {
                 if (control.DropdownMenu == null)
                 {
-                    control.DropdownMenu = VisualTreeService.FindVisualChild<Popup>(control.MultiSelectComboBoxGrid, PART_MultiSelectComboBox_Dropdown);
+                    var el = VisualTreeService.FindVisualChild<Popup>(control.MultiSelectComboBoxGrid, PART_MultiSelectComboBox_Dropdown);
+
+                    if (el is null)
+                    {
+                        control.Dispatcher.BeginInvoke(DispatcherPriority.Loaded,
+                            (Action) (() =>
+                                ItemsPropertyChangedCallback(dependencyObject, dependencyPropertyChangedEventArgs)));
+                        return;
+                    }
+
+                    control.DropdownMenu = el;
                 }
 
                 if (control.DropdownMenu != null)
                 {
-                    control.DropdownListBox = VisualTreeService.FindVisualChild<ListBox>(control.DropdownMenu.Child, PART_MultiSelectComboBox_Dropdown_ListBox);
+                    var el = VisualTreeService.FindVisualChild<ListBox>(control.DropdownMenu.Child, PART_MultiSelectComboBox_Dropdown_ListBox);
+
+                    if (el is null)
+                    {
+                        control.Dispatcher.BeginInvoke(DispatcherPriority.Loaded,
+                            (Action) (() =>
+                                ItemsPropertyChangedCallback(dependencyObject, dependencyPropertyChangedEventArgs)));
+                        return;
+                    }
+
+                    control.DropdownListBox = el;
                 }
             }
         }
