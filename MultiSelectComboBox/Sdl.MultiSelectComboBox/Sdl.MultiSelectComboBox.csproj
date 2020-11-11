@@ -73,6 +73,7 @@
     <Compile Include="Services\DropdownItemTemplateService.cs" />
     <Compile Include="Services\GroupComparerService.cs" />
     <Compile Include="Services\SelectedItemTemplateService.cs" />
+    <Compile Include="Services\SelectionContext.cs" />
     <Compile Include="Services\VisualTreeService.cs" />
     <Compile Include="Themes\Generic\MultiSelectComboBox.cs" />
   </ItemGroup>

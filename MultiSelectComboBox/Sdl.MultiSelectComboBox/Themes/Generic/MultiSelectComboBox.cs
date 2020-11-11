@@ -1132,10 +1132,17 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
                         }
                         break;
                     case Key.Return:
+                        bool isItemResolved = false;
+
                         if (IsDropDownOpen)
                         {
-                            SelectComboBoxItem();
+                            isItemResolved = SelectComboBoxItem();
                             IsDropDownOpen = false;
+                        }
+
+                        if (!isItemResolved && EnableNewItemsCreation)
+                        {
+                            CreateNewSelectedItem();
                         }
 
                         SelectedItemsFilterTextBox.Text = string.Empty;
@@ -1543,7 +1550,7 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
             }
         }
 
-        private void SelectComboBoxItem()
+        private bool SelectComboBoxItem()
         {
             if (DropdownListBox.SelectedItem == null && DropdownListBox.Items.Count > 0)
             {
@@ -1558,25 +1565,26 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
                 listBoxItem.IsChecked = true;
 
                 UpdateSelectedItemsContainer(ItemsSource);
+
+                return true;
             }
-            else if (EnableNewItemsCreation)
-            {
-                CreateNewSelectedItem();
-            }
+
+            return false;
         }
 
         private void CreateNewSelectedItem()
         {
             string selectedText = SelectedItemsFilterTextBox.Text;
+            SelectionContext context = new SelectionContext(selectedText, SelectedItems);
 
-            if (ItemFactoryService == null || !ItemFactoryService.CanCreate(selectedText))
+            if (ItemFactoryService == null || !ItemFactoryService.CanCreate(context))
             {
                 return;
             }
 
             object[] newItems =
             {
-                ItemFactoryService.CreateNewItem(selectedText)
+                ItemFactoryService.CreateNewItem(context)
             };
 
             Collection<object> itemsAdded = new Collection<object>(new List<object>(1));
@@ -1585,6 +1593,8 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
 
             if (itemsAdded.Count > 0)
             {
+                SelectedItems.Add(newItems[0]);
+
                 RaiseSelectedItemsChangedEvent(itemsAdded, new Collection<object>(),
                     SelectedItemsInternal.Where(a => a != null).ToList());
             }

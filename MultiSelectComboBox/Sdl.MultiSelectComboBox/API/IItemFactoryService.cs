@@ -1,9 +1,11 @@
-﻿namespace Sdl.MultiSelectComboBox.API
+﻿using Sdl.MultiSelectComboBox.Services;
+
+namespace Sdl.MultiSelectComboBox.API
 {
     public interface IItemFactoryService
     {
-        bool CanCreate(string text);
+        bool CanCreate(SelectionContext context);
 
-        object CreateNewItem(string text);
+        object CreateNewItem(SelectionContext context);
     }
 }
