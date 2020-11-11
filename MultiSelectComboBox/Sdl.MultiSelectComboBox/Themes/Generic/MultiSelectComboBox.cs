@@ -1526,7 +1526,7 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
                 ItemsCollectionViewSource.View.Refresh();
 
                 // hack for an invalid initialization order on WinForms platform
-                // has no idea how to quickly fix it in some another way
+                // have no idea how to quickly fix it in some another way
                 DropdownListBox.ItemsSource = ItemsCollectionViewSource.View;
 
                 if (DropdownListBox?.Items.Count > 0)
@@ -1632,6 +1632,7 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
             Collection<object> itemsAdded = new Collection<object>(new List<object>(1));
 
             AddSelectedItems(SelectedItemsInternal, newItems, ref itemsAdded, this);
+            UpdateSelectedItemsContainer(ItemsSource);
 
             if (itemsAdded.Count > 0)
             {
