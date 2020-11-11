@@ -420,6 +420,10 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
             {
                 control.ItemsCollectionViewSource = control.ItemsCollectionViewSource;
             }
+            else
+            {
+                control?.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, (Action)(() => EnableGroupingPropertyChangedCallback(dependencyObject, dependencyPropertyChangedEventArgs)));
+            }
         }
 
         public static readonly DependencyProperty EnableFilteringProperty =
@@ -449,6 +453,10 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
             if (control?.MultiSelectComboBoxGrid != null)
             {
                 control.ItemsCollectionViewSource = control.ItemsCollectionViewSource;
+            }
+            else
+            {
+                control?.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, (Action)(() => EnableFilteringPropertyChangedCallback(dependencyObject, dependencyPropertyChangedEventArgs)));
             }
         }
 
@@ -480,6 +488,10 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
             {
                 control.ItemsCollectionViewSource = control.ItemsCollectionViewSource;
             }
+            else
+            {
+                control?.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, (Action)(() => FilterServicePropertyChangedCallback(dependencyObject, dependencyPropertyChangedEventArgs)));
+            }
         }
 
 
@@ -505,6 +517,10 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
             if (control?.MultiSelectComboBoxGrid != null)
             {
                 control.UpdateSelectedItemsContainer(control.ItemsSource);
+            }
+            else
+            {
+                control.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, (Action)(() => SelectionModePropertyChangedCallback(dependencyObject, dependencyPropertyChangedEventArgs)));
             }
         }
 
@@ -559,6 +575,7 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
 
             if (control.MultiSelectComboBoxGrid == null)
             {                
+                control.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, (Action)(() => ItemsPropertyChangedCallback(dependencyObject, dependencyPropertyChangedEventArgs)));
                 return;
             }
 
@@ -769,6 +786,7 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
 
         private bool MultiSelectComboBoxHasFocus { get; set; }
 
+        private static List<DeferredAction> _deferredActions = new List<DeferredAction>();
 
         private bool IsSelectedItem(object item)
         {
