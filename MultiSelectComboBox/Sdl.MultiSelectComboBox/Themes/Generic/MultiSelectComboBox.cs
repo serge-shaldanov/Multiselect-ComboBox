@@ -42,6 +42,8 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
         private const string MultiSelectComboBox_SelectedItems_Searchable_ItemTemplate = "MultiSelectComboBox.SelectedItems.Searchable.ItemTemplate";
         private const string MultiSelectComboBox_Dropdown_ListBox_ItemTemplate = "MultiSelectComboBox.Dropdown.ListBox.ItemTemplate";
 
+        private readonly IList<Action> _deferredActions = new List<Action>();
+
         private Window _controlWindow;
         private Window ControlWindow
         {
@@ -341,6 +343,13 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
             {
                 ControlWindow = Window.GetWindow(MultiSelectComboBoxGrid);
             }
+
+            foreach (Action deferredAction in _deferredActions)
+            {
+                deferredAction();
+            }
+
+            this._deferredActions.Clear();
         }
         public enum SelectionModes
         {
@@ -422,7 +431,7 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
             }
             else
             {
-                control?.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, (Action)(() => EnableGroupingPropertyChangedCallback(dependencyObject, dependencyPropertyChangedEventArgs)));
+                control?._deferredActions.Add(() => EnableGroupingPropertyChangedCallback(dependencyObject, dependencyPropertyChangedEventArgs));
             }
         }
 
@@ -456,7 +465,7 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
             }
             else
             {
-                control?.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, (Action)(() => EnableFilteringPropertyChangedCallback(dependencyObject, dependencyPropertyChangedEventArgs)));
+                control?._deferredActions.Add(() => EnableFilteringPropertyChangedCallback(dependencyObject, dependencyPropertyChangedEventArgs));
             }
         }
 
@@ -490,11 +499,9 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
             }
             else
             {
-                control?.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, (Action)(() => FilterServicePropertyChangedCallback(dependencyObject, dependencyPropertyChangedEventArgs)));
+                control?._deferredActions.Add(() => FilterServicePropertyChangedCallback(dependencyObject, dependencyPropertyChangedEventArgs));
             }
         }
-
-
 
         public static readonly DependencyProperty IsDropDownOpenProperty =
             DependencyProperty.Register("IsDropDownOpen", typeof(bool), typeof(MultiSelectComboBox),
@@ -520,7 +527,7 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
             }
             else
             {
-                control?.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, (Action)(() => SelectionModePropertyChangedCallback(dependencyObject, dependencyPropertyChangedEventArgs)));
+                control?._deferredActions.Add(() => SelectionModePropertyChangedCallback(dependencyObject, dependencyPropertyChangedEventArgs));
             }
         }
 
@@ -559,7 +566,7 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
 
             if (control.MultiSelectComboBoxGrid == null)
             {
-                control.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, (Action)(() => ItemsCoerceValueCallback(dependencyObject, baseValue)));
+                control?._deferredActions.Add(() => ItemsCoerceValueCallback(dependencyObject, baseValue));
                 return baseValue;
             }
             control.UpdateSelectedItemsContainer(baseValue as IList);
@@ -576,7 +583,7 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
 
             if (control.MultiSelectComboBoxGrid == null)
             {                
-                control.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, (Action)(() => ItemsPropertyChangedCallback(dependencyObject, dependencyPropertyChangedEventArgs)));
+                control?._deferredActions.Add(() => ItemsPropertyChangedCallback(dependencyObject, dependencyPropertyChangedEventArgs));
                 return;
             }
 
@@ -1002,7 +1009,7 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
                 return;
             if (control.MultiSelectComboBoxGrid == null)
             {
-                control.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, (Action)(() => SuggestionProviderPropertyChangedCallback(dependencyObject, dependencyPropertyChangedEventArgs)));
+                control?._deferredActions.Add(() => SuggestionProviderPropertyChangedCallback(dependencyObject, dependencyPropertyChangedEventArgs));
                 return;
             }
             control.UpdateItems(string.Empty);
@@ -1488,7 +1495,7 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
 
                 ItemsCollectionViewSource.View.Refresh();
 
-                DropdownListBox.ItemsSource = ItemsCollectionViewSource.View;
+                // DropdownListBox.ItemsSource = ItemsCollectionViewSource.View;
 
                 if (DropdownListBox?.Items.Count > 0)
                 {
