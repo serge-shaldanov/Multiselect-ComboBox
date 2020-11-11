@@ -520,7 +520,7 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
             }
             else
             {
-                control.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, (Action)(() => SelectionModePropertyChangedCallback(dependencyObject, dependencyPropertyChangedEventArgs)));
+                control?.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, (Action)(() => SelectionModePropertyChangedCallback(dependencyObject, dependencyPropertyChangedEventArgs)));
             }
         }
 
@@ -557,8 +557,9 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
 		        return baseValue;
 	        }
 
-            if(control.MultiSelectComboBoxGrid == null)
-            {                
+            if (control.MultiSelectComboBoxGrid == null)
+            {
+                control.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, (Action)(() => ItemsCoerceValueCallback(dependencyObject, baseValue)));
                 return baseValue;
             }
             control.UpdateSelectedItemsContainer(baseValue as IList);
