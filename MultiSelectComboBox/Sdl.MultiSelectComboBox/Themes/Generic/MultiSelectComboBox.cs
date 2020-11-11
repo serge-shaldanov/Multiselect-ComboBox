@@ -1575,7 +1575,7 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
         private void CreateNewSelectedItem()
         {
             string selectedText = SelectedItemsFilterTextBox.Text;
-            SelectionContext context = new SelectionContext(selectedText, SelectedItems);
+            SelectionContext context = new SelectionContext(selectedText, SelectedItemsInternal);
 
             if (ItemFactoryService == null || !ItemFactoryService.CanCreate(context))
             {
@@ -1593,8 +1593,6 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
 
             if (itemsAdded.Count > 0)
             {
-                SelectedItems.Add(newItems[0]);
-
                 RaiseSelectedItemsChangedEvent(itemsAdded, new Collection<object>(),
                     SelectedItemsInternal.Where(a => a != null).ToList());
             }
