@@ -1488,6 +1488,8 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
 
                 ItemsCollectionViewSource.View.Refresh();
 
+                DropdownListBox.ItemsSource = ItemsCollectionViewSource.View;
+
                 if (DropdownListBox?.Items.Count > 0)
                 {
                     var item = DropdownListBox.Items[0];
