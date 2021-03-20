@@ -5,5 +5,4 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/Sdl.MultiSelectComboBox;component/Themes/Generic/MultiSelectComboBox.xaml"/>
     </ResourceDictionary.MergedDictionaries>
-
 </ResourceDictionary>

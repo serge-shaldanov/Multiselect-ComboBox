@@ -180,6 +180,33 @@
         <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="ItemContainerStyle" Value="{StaticResource MultiSelectComboBox.Dropdown.ListBox.ItemContainerStyle}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListBox}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Visibility="{Binding IsItemAlreadySelected, RelativeSource={RelativeSource AncestorType=sdl:MultiSelectComboBox}, Converter={StaticResource BoolToCollapsed}}"
+                                   Foreground="{StaticResource MultiSelectComboBox.Text.Disabled.Foreground}"
+                                   Text="{Binding SelectedText, StringFormat=The item “{0}” already selected., Mode=OneWay, RelativeSource={RelativeSource AncestorType=sdl:MultiSelectComboBox}}" />
+
+                        <TextBlock Grid.Row="0" Padding="7" Visibility="{Binding CanAddNewItem, RelativeSource={RelativeSource AncestorType=sdl:MultiSelectComboBox}, Converter={StaticResource BoolToCollapsed}}">
+                            <Hyperlink Command="{Binding AddNewItemCommand, RelativeSource={RelativeSource AncestorType=sdl:MultiSelectComboBox}}">
+                                <TextBlock>
+                                    <Run Text="{Binding SelectedText, StringFormat=Add “{0}” as new item., Mode=OneWay, RelativeSource={RelativeSource AncestorType=sdl:MultiSelectComboBox}}" />
+                                </TextBlock>
+                            </Hyperlink>
+                        </TextBlock>
+                        <ScrollViewer x:Name="ScrollViewer" Grid.Row="1">
+                            <ItemsPresenter />
+                        </ScrollViewer>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
@@ -193,7 +220,21 @@
                     <Setter.Value>
                         <ControlTemplate>
                             <Border Padding="4" BorderThickness="1" BorderBrush="Gray">
-                                <TextBlock>No results found.</TextBlock>
+                                <TextBlock Padding="10"
+                                           Foreground="{StaticResource MultiSelectComboBox.Text.Disabled.Foreground}">
+                                    <Run Text="No results found." />
+
+                                    <TextBlock Visibility="{Binding IsItemAlreadySelected, RelativeSource={RelativeSource AncestorType=sdl:MultiSelectComboBox}, Converter={StaticResource BoolToCollapsed}}"
+                                               Text="{Binding SelectedText, StringFormat=The item “{0}” already selected., Mode=OneWay, RelativeSource={RelativeSource AncestorType=sdl:MultiSelectComboBox}}" />
+
+                                    <TextBlock Visibility="{Binding CanAddNewItem, RelativeSource={RelativeSource AncestorType=sdl:MultiSelectComboBox}, Converter={StaticResource BoolToCollapsed}}">
+                                        <Hyperlink Command="{Binding AddNewItemCommand, RelativeSource={RelativeSource AncestorType=sdl:MultiSelectComboBox}}">
+                                            <TextBlock>
+                                                <Run Text="{Binding SelectedText, StringFormat=Add “{0}” as new item., Mode=OneWay, RelativeSource={RelativeSource AncestorType=sdl:MultiSelectComboBox}}" />
+                                            </TextBlock>
+                                        </Hyperlink>
+                                    </TextBlock>
+                                </TextBlock>
                             </Border>
                         </ControlTemplate>
                     </Setter.Value>

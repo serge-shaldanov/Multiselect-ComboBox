@@ -63,6 +63,7 @@
     <Compile Include="Behaviours\EventBehaviourFactory.cs" />
     <Compile Include="Behaviours\FilterTextChangedBehaviour.cs" />
     <Compile Include="Behaviours\SelectedItemsChangedBehaviour.cs" />
+    <Compile Include="Commands\AddNewItemCommand.cs" />
     <Compile Include="Controls\ContentItemsControl.cs" />
     <Compile Include="Controls\ExtendedListBox.cs" />
     <Compile Include="Controls\ExtendedListBoxItem.cs" />

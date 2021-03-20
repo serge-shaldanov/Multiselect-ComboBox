@@ -30,4 +30,5 @@
   <SolidColorBrush x:Key="MultiSelectComboBox.Text.Disabled.Foreground" Color="#FFB8B3B3"/>
   <SolidColorBrush x:Key="MultiSelectComboBox.Text.Foreground" Color="#FF000000"/>
 
+  <BooleanToVisibilityConverter x:Key="BoolToCollapsed" />
 </ResourceDictionary>

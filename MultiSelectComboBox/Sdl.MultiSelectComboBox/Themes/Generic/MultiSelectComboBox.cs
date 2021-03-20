@@ -6,7 +6,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -16,6 +18,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using Sdl.MultiSelectComboBox.Commands;
 
 namespace Sdl.MultiSelectComboBox.Themes.Generic
 {
@@ -27,7 +30,7 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
     [TemplatePart(Name = PART_MultiSelectComboBox_SelectedItemsPanel_Filter_TextBox, Type = typeof(TextBox))]
     [TemplatePart(Name = PART_MultiSelectComboBox_SelectedItemsPanel_Filter_AutoComplete_TextBox, Type = typeof(TextBox))]
     [TemplatePart(Name = PART_MultiSelectComboBox_SelectedItemsPanel_RemoveItem_Button, Type = typeof(Button))]
-    public class MultiSelectComboBox : Control, IDisposable
+    public class MultiSelectComboBox : Control, IDisposable, INotifyPropertyChanged
     {
         private const string PART_MultiSelectComboBox = "PART_MultiSelectComboBox";
         private const string PART_MultiSelectComboBox_Dropdown = "PART_MultiSelectComboBox_Dropdown";
@@ -270,6 +273,11 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
             EventManager.RegisterClassHandler(typeof(MultiSelectComboBox), Mouse.PreviewMouseDownOutsideCapturedElementEvent, new MouseButtonEventHandler(OnPreviewMouseDownOutside), true);
         }
 
+        public MultiSelectComboBox()
+        {
+            this.AddNewItemCommand = new AddNewItemCommand(this);
+        }
+
         private object _previousSelectedValue;
         private static void OneMouseLeave(object sender, MouseEventArgs e)
         {
@@ -421,6 +429,44 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
             DependencyProperty.Register("EnableGrouping", typeof(bool), typeof(MultiSelectComboBox),
                 new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.None, EnableGroupingPropertyChangedCallback));
 
+        public bool CanAddNewItem
+        {
+            get
+            {
+                return this.IsEditable &&
+                       this.EnableNewItemsCreation &&
+                       !this.IsItemAlreadySelected &&
+                       this.SelectedText.Length > 0;
+            }
+        }
+
+        public bool IsItemAlreadySelected
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(this.SelectedText))
+                {
+                    return false;
+                }
+
+                if (!this.EnableNewItemsCreation)
+                {
+                    return false;
+                }
+
+                if (this.ItemFactoryService is null)
+                {
+                    return false;
+                }
+
+                var context = new SelectionContext(this.SelectedText, this.SelectedItemsInternal);
+
+                return !this.ItemFactoryService.CanCreate(context);
+            }
+        }
+
+        public ICommand AddNewItemCommand { get; }
+
         private static void EnableGroupingPropertyChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
         {
             var control = dependencyObject as MultiSelectComboBox;
@@ -452,7 +498,12 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
         public bool EnableNewItemsCreation
         {
             get => (bool)GetValue(EnableNewItemsCreationProperty);
-            set => SetValue(EnableNewItemsCreationProperty, value);
+
+            set
+            {
+                SetValue(EnableNewItemsCreationProperty, value);
+                this.OnPropertyChanged(nameof(this.CanAddNewItem));
+            }
         }
 
         private static void EnableFilteringPropertyChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
@@ -786,7 +837,12 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
         public bool IsEditable
         {
             get => (bool)GetValue(IsEditableProperty);
-            set => SetValue(IsEditableProperty, value);
+
+            set
+            {
+                SetValue(IsEditableProperty, value);
+                this.OnPropertyChanged(nameof(this.CanAddNewItem));
+            }
         }
 
         private static readonly DependencyPropertyKey IsEditModePropertyKey =
@@ -1203,6 +1259,24 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
             }
         }
 
+        public void AddNewSelectedItem()
+        {
+            if (!this.EnableNewItemsCreation)
+            {
+                return;
+            }
+
+            CreateNewSelectedItem();
+
+            SelectedItemsFilterTextBox.Text = string.Empty;
+            FilterTextApplied = string.Empty;
+
+            UpdateItems(string.Empty);
+
+            this.SelectedItemsFilterTextBox.Focus();
+            this.CloseDropdownMenu(true, false);
+        }
+
         private void DropdownMenuClosed(object sender, System.EventArgs e)
         {
             FocusCursorOnFilterTextBox();
@@ -1470,6 +1544,21 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
             }
 
             UpdateAutoCompleteFilterText(criteria, DropdownListBox != null && DropdownListBox.Items.Count > 0 ? DropdownListBox.Items[0] : null);
+
+            this.OnPropertyChanged(nameof(this.SelectedText));
+
+            if (!this.EnableNewItemsCreation) return;
+
+            this.OnPropertyChanged(nameof(this.CanAddNewItem));
+            this.OnPropertyChanged(nameof(this.IsItemAlreadySelected));
+        }
+
+        public string SelectedText
+        {
+            get
+            {
+                return this.SelectedItemsFilterTextBox.Text;
+            }
         }
 
         private void ResetDropdownMenu()
@@ -1615,8 +1704,7 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
 
         private void CreateNewSelectedItem()
         {
-            string selectedText = SelectedItemsFilterTextBox.Text;
-            SelectionContext context = new SelectionContext(selectedText, SelectedItemsInternal);
+            SelectionContext context = new SelectionContext(this.SelectedText, SelectedItemsInternal);
 
             if (ItemFactoryService == null || !ItemFactoryService.CanCreate(context))
             {
@@ -1849,6 +1937,13 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
             {
                 item.IsChecked = isChecked;
             }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
