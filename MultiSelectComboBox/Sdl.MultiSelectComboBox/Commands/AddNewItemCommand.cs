@@ -23,5 +23,10 @@ namespace Sdl.MultiSelectComboBox.Commands
         }
 
         public event EventHandler CanExecuteChanged;
+
+        public void RaiseCanExecuteChanged()
+        {
+            this.CanExecuteChanged?.Invoke(this, System.EventArgs.Empty);
+        }
     }
 }

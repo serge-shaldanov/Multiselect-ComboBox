@@ -465,7 +465,7 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
             }
         }
 
-        public ICommand AddNewItemCommand { get; }
+        public AddNewItemCommand AddNewItemCommand { get; }
 
         private static void EnableGroupingPropertyChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
         {
@@ -503,6 +503,7 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
             {
                 SetValue(EnableNewItemsCreationProperty, value);
                 this.OnPropertyChanged(nameof(this.CanAddNewItem));
+                this.AddNewItemCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -842,6 +843,7 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
             {
                 SetValue(IsEditableProperty, value);
                 this.OnPropertyChanged(nameof(this.CanAddNewItem));
+                this.AddNewItemCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -1551,6 +1553,7 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
 
             this.OnPropertyChanged(nameof(this.CanAddNewItem));
             this.OnPropertyChanged(nameof(this.IsItemAlreadySelected));
+            this.AddNewItemCommand.RaiseCanExecuteChanged();
         }
 
         public string SelectedText
