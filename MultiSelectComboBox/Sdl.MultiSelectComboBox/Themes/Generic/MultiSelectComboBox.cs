@@ -1131,7 +1131,6 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
                 }
                 return;
             }
-
             if (!IsEditMode && OpenDropDownListAlsoWhenNotInEditMode == false)
             {
                 e.Handled = true;
@@ -1270,13 +1269,10 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
 
             CreateNewSelectedItem();
 
+            IsDropDownOpen = false;
+
             SelectedItemsFilterTextBox.Text = string.Empty;
             FilterTextApplied = string.Empty;
-
-            UpdateItems(string.Empty);
-
-            this.SelectedItemsFilterTextBox.Focus();
-            this.CloseDropdownMenu(true, false);
         }
 
         private void DropdownMenuClosed(object sender, System.EventArgs e)
