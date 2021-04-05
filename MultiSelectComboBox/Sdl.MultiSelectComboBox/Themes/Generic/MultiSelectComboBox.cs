@@ -1045,6 +1045,8 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
                     var args = new SelectedItemsChangedEventArgs(SelectedItemsChangedEvent, added, removed, selected);
                     RaiseEvent(args);
                 }));
+
+            this.UpdateAddNewItemProperties();
         }
 
         private void MultiSelectComboBox_PreviewKeyUp(object sender, KeyEventArgs e)
@@ -1547,6 +1549,11 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
 
             if (!this.EnableNewItemsCreation) return;
 
+            this.UpdateAddNewItemProperties();
+        }
+
+        private void UpdateAddNewItemProperties()
+        {
             this.OnPropertyChanged(nameof(this.CanAddNewItem));
             this.OnPropertyChanged(nameof(this.IsItemAlreadySelected));
             this.AddNewItemCommand.RaiseCanExecuteChanged();
@@ -1657,6 +1664,8 @@ namespace Sdl.MultiSelectComboBox.Themes.Generic
                 SelectedItemsFilterAutoCompleteTextBox.Text = string.Empty;
                 SelectedItemsFilterAutoCompleteTextBox.Background = Brushes.Transparent;
             }
+
+            this.UpdateAddNewItemProperties();
         }
 
         private void AssignIsEditMode()
